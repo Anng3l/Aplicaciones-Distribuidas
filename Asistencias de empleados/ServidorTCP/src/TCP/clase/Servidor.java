@@ -93,7 +93,11 @@ public class Servidor {
     static String getFecha(String nombre, Time ingresoTrabajo, Time salidaAlmuerzo, Time ingresoAlmuerzo, Time salidaTrabajo)
     {
         SimpleDateFormat formato = new SimpleDateFormat("HH:mm:ss");
-        return nombre + "\n Hora de ingreso trabajo: " + formato.format(ingresoTrabajo)
+        SimpleDateFormat formatoFecha = new SimpleDateFormat("yyyy-MM-dd");
+        String fechaActual = formatoFecha.format(new Date());
+
+        return nombre + "\n Fecha: " + fechaActual
+                    + "\n Hora de ingreso trabajo: " + formato.format(ingresoTrabajo)
                     + "\n Hora de salida almuerzo: " + formato.format(salidaAlmuerzo)
                     + "\n Hora de ingreso almuerzo: " + formato.format(ingresoAlmuerzo)
                     + "\n Hora de salida trabajo: " + formato.format(salidaTrabajo) + "\n";
