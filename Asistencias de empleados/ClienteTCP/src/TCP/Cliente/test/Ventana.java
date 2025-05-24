@@ -15,12 +15,13 @@ public class Ventana extends JFrame {
 
 
     private JButton botonEnviar;
+    private JButton botonVisualizar;
 
     private JTextArea lblResultado = new JTextArea("Resultado: ");
 
     public Ventana() {
         setTitle("Calculadora");
-        setSize(400, 400);
+        setSize(600, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(null);
@@ -69,10 +70,29 @@ public class Ventana extends JFrame {
         botonEnviar.setBounds(50, 220, 150, 30);
         add(botonEnviar);
 
-        lblResultado.setBounds(50, 260, 280, 80); // Aumenta el tamaño para más texto
+        botonVisualizar = new JButton("Visualizar asistencias de un empleado");
+        botonVisualizar.setBounds(50, 400, 300, 30);
+        add(botonVisualizar);
+
+        lblResultado.setBounds(50, 260, 280, 110);
         add(lblResultado);
-        lblResultado.setEditable(false); // ❌ No editable
+        lblResultado.setEditable(false);
         lblResultado.setLineWrap(true);
+
+
+
+        JTextArea textArea = new JTextArea();
+        textArea.setEditable(false);
+        textArea.setLineWrap(true);
+        textArea.setWrapStyleWord(true);
+
+        JScrollPane scrollPane = new JScrollPane(textArea);
+        scrollPane.setBounds(50, 450, 280, 80);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+
+        add(scrollPane);
+        textArea.setText("Resultado: ");
+
 
         // Action listeners for buttons
         botonEnviar.addActionListener(e -> {
@@ -85,11 +105,26 @@ public class Ventana extends JFrame {
 
             //Llamada al servidor
             try {
-                String resultado = Cliente.enviarAsistencias(username, ingresoTrabajo, salidaAlmuerzo, ingresoAlmuerzo, salidaTrabajo);
+                String resultado = Cliente.enviarAsistencias("registrar",username, ingresoTrabajo, salidaAlmuerzo, ingresoAlmuerzo, salidaTrabajo);
                 System.out.println(resultado);
                 lblResultado.setText(resultado);
             } catch (Exception ex) {
                 throw new RuntimeException(ex);
+            }
+        });
+        botonVisualizar.addActionListener(e -> {
+            String username = textUserName.getText();
+            System.out.println("1 ventana");
+            try
+            {
+                System.out.println("2 ventana");
+                String asistencias = Cliente.visualizarAsistencias("consultar", username);
+                System.out.println(asistencias);
+                textArea.setText(asistencias);
+            }
+            catch (Exception exception)
+            {
+
             }
         });
 

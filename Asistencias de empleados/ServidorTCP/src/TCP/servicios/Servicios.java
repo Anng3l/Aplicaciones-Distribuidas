@@ -9,10 +9,8 @@ public class Servicios {
         ObjectOutputStream oos;
 
         if (archivo.length() == 0) {
-            // Si el archivo está vacío, se usa el ObjectOutputStream normal
             oos = new ObjectOutputStream(fos);
         } else {
-            // Si ya tiene contenido, se usa una versión que no escribe encabezado
             oos = new ObjectOutputStreamSinCabecera(fos);
         }
 
@@ -25,10 +23,21 @@ public class Servicios {
     public String leer(String ruta) throws Exception {
         FileInputStream fis = new FileInputStream(ruta);
         ObjectInputStream ois = new ObjectInputStream(fis);
-        String p = (String) ois.readObject();
-        ois.close();
-        return p;
-    };
+
+        StringBuilder contenido = new StringBuilder();
+
+        try {
+            while (true) {
+                String linea = (String) ois.readObject();
+                contenido.append(linea).append("\n");
+            }
+        } catch (EOFException eof) {
+        } finally {
+            ois.close();
+        }
+
+        return contenido.toString();
+    }
 
     private static class ObjectOutputStreamSinCabecera extends ObjectOutputStream {
         public ObjectOutputStreamSinCabecera(OutputStream out) throws IOException {
@@ -37,7 +46,6 @@ public class Servicios {
 
         @Override
         protected void writeStreamHeader() throws IOException {
-            // No escribir el encabezado
         }
     }
 

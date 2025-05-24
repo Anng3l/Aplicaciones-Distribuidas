@@ -21,7 +21,7 @@ public class Cliente {
         return p;
     };
 
-    public static String enviarAsistencias(String nombre, String ingresoTrabajo, String salidaAlmuerzo, String ingresoAlmuerzo, String salidaTrabajo) throws Exception {
+    public static String enviarAsistencias(String tipo, String nombre, String ingresoTrabajo, String salidaAlmuerzo, String ingresoAlmuerzo, String salidaTrabajo) throws Exception {
         Socket cliente = new Socket(IP, PUERTO);
 
         InputStream in = cliente.getInputStream();
@@ -29,7 +29,25 @@ public class Cliente {
 
         //Envair datos al server
         DataOutputStream dos = new DataOutputStream(out);
-        String datos = nombre+","+ingresoTrabajo+","+salidaAlmuerzo+","+ingresoAlmuerzo+","+salidaTrabajo;
+        String datos = tipo+","+nombre+","+ingresoTrabajo+","+salidaAlmuerzo+","+ingresoAlmuerzo+","+salidaTrabajo;
+        dos.writeUTF(datos);
+
+        //Leer la respuesta
+        DataInputStream dis = new DataInputStream(in);
+        String respuesta = dis.readUTF();
+        cliente.close();
+
+        return respuesta;
+    }
+
+    public static String visualizarAsistencias(String tipo, String username) throws Exception {
+        Socket cliente = new Socket(IP, PUERTO);
+        System.out.println("1");
+        InputStream in = cliente.getInputStream();
+        OutputStream out = cliente.getOutputStream();
+
+        DataOutputStream dos = new DataOutputStream(out);
+        String datos = tipo+","+username;
         dos.writeUTF(datos);
 
         //Leer la respuesta

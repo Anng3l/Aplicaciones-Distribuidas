@@ -9,7 +9,6 @@ import java.net.Socket;
 import java.sql.SQLOutput;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 
 
 public class Servidor {
@@ -91,7 +90,7 @@ public class Servidor {
 
 
     //Método para capturar la fecha
-    public static String getFecha(String nombre, Time ingresoTrabajo, Time salidaAlmuerzo, Time ingresoAlmuerzo, Time salidaTrabajo)
+    static String getFecha(String nombre, Time ingresoTrabajo, Time salidaAlmuerzo, Time ingresoAlmuerzo, Time salidaTrabajo)
     {
         SimpleDateFormat formato = new SimpleDateFormat("HH:mm:ss");
         return nombre + "\n Hora de ingreso trabajo: " + formato.format(ingresoTrabajo)
@@ -100,62 +99,78 @@ public class Servidor {
                     + "\n Hora de salida trabajo: " + formato.format(salidaTrabajo) + "\n";
     }
 
+    public static String getAsistencias(String username) throws Exception {
+        String ruta = "C:/Users/angel/Desktop/Archivos/asistencia_" + username + ".dat";
 
-    //Método para iniciar el servidor
+        Servicios servicios = new Servicios();
+
+        String asistencias = servicios.leer(ruta);
+
+        return asistencias;
+    }
+
+
     public static void procesarSolicitud(int puerto) throws Exception {
-        //Se crea el socket del servidor
         ServerSocket servidor = new ServerSocket(puerto);
-        System.out.println("Servidor de Fechas corriendo... ");
+        System.out.println("Servidor corriendo en puerto " + puerto);
 
-        while (true)
-        {
-            //Acepta solicitudes desde otros sockets
+        while (true) {
             Socket cliente = servidor.accept();
             System.out.println("Cliente conectado");
-            InputStream in = cliente.getInputStream();
-            OutputStream out = cliente.getOutputStream();
 
-            //Leer Nombre del empleado
-            DataInputStream dis = new DataInputStream(in);
-            String data = dis.readUTF();
-            if (data.equals("x")) break;
+            try {
+                InputStream in = cliente.getInputStream();
+                OutputStream out = cliente.getOutputStream();
 
-            String[] partes = data.split(",");
-            System.out.println("###############: "+ Arrays.toString(partes));
-            if (partes.length == 5)
-            {
-                try
-                {
-                    String nombre = partes[0];
-                    String ingresoTrabajo = partes[1];
-                    String salidaAlmuerzo = partes[2];
-                    String ingresoAlmuerzo = partes[3];
-                    String salidaTrabajo = partes[4];
+                DataInputStream dis = new DataInputStream(in);
+                DataOutputStream dos = new DataOutputStream(out);
 
-                    String resultado = Servidor.getFecha(nombre, Time.valueOf(ingresoTrabajo), Time.valueOf(salidaAlmuerzo),
+                // Primero leemos el tipo de solicitud: "registrar" o "consultar"
+                String datos = dis.readUTF();
+                String[] datosSeparados = datos.split(",");
+                String tipo = datosSeparados[0];
+                System.out.println("Tipo de solicitud: " + tipo);
+
+                if (tipo.equals("x")) break;
+
+                if (tipo.equalsIgnoreCase("registrar")) {
+                    String nombre = datosSeparados[1];
+                    String ingresoTrabajo = datosSeparados[2];
+                    String salidaAlmuerzo = datosSeparados[3];
+                    String ingresoAlmuerzo = datosSeparados[4];
+                    String salidaTrabajo = datosSeparados[5];
+
+                    String resultado = getFecha(nombre, Time.valueOf(ingresoTrabajo), Time.valueOf(salidaAlmuerzo),
                             Time.valueOf(ingresoAlmuerzo), Time.valueOf(salidaTrabajo));
-                    System.out.println(resultado);
-                    Servicios servicios = new Servicios();
+
                     String ruta = "C:/Users/angel/Desktop/Archivos/asistencia_" + nombre + ".dat";
+                    Servicios servicios = new Servicios();
                     servicios.escribir(resultado, ruta);
+
                     System.out.println("Archivo almacenado exitosamente");
-                    System.out.println("Mensaje recibido exitosamente");
+                    dos.writeUTF("Asistencia registrada:\n" + resultado);
 
-                    //Devolver la respuesta al cliente
-                    DataOutputStream dos = new DataOutputStream(out);
-                    dos.writeUTF(resultado);
-                    cliente.close();
                 }
 
-                catch(Exception e)
-                {
-                    System.out.println("Error en el servidor");
+                else if (tipo.equalsIgnoreCase("consultar")) {
+                    // Recibimos el nombre del usuario
+                    String username = datosSeparados[1];
+                    String ruta = "C:/Users/angel/Desktop/Archivos/asistencia_" + username + ".dat";
+                    Servicios servicios = new Servicios();
+                    String asistencias = servicios.leer(ruta);
+                    dos.writeUTF("Asistencias de " + username + ":\n" + asistencias);
+                    System.out.println(asistencias);
                 }
 
+                cliente.close();
+
+            } catch (Exception e) {
+                System.out.println("Error en el servidor:");
+                e.printStackTrace();
             }
-
-
         }
+
         servidor.close();
     }
+
 }
