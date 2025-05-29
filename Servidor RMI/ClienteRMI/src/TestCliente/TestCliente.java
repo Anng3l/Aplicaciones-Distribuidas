@@ -1,11 +1,20 @@
 package TestCliente;
 
-import Cliente.Cliente;
 
+import Ventana.VentanaCarrera;
+import clase.Servidor;
+
+import java.rmi.Naming;
 import java.util.Scanner;
+
 
 public class TestCliente {
     public static void main(String[] args) throws Exception {
+        String rmiObjectName = "rmi://localhost/Datos";
+        Servidor servicio = null;
+        servicio = (Servidor) Naming.lookup(rmiObjectName);
+        new VentanaCarrera(servicio);
+       /*
         String op=null;
         int id = -1;
         Scanner scanner = null;
@@ -17,6 +26,6 @@ public class TestCliente {
             System.out.println("Desea salir si(s) / no(n)");
             op = scanner.next();
         } while (op.equals("n"));
-        scanner.close();
+        scanner.close();*/
     }
 }
