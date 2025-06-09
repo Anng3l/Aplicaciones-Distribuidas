@@ -1,0 +1,10 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="Servidor RMI -- Examen:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/Servidor_RMI____Examen_jar</output-path>
+    <root id="archive" name="Servidor RMI -- Examen.jar">
+      <element id="module-output" name="Servidor RMI -- Examen" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/sqlite-jdbc-3.42.0.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lombok.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>

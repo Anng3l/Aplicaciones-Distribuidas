@@ -1,7 +1,7 @@
 <component name="libraryTable">
   <library name="InterfaceRemota">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/Protocolo RMI/out/production/Protocolo RNI/InterfaceRemota.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../Servidor RMI -- Examen/out/production/Servidor RMI -- Examen/InterfaceRemota.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
